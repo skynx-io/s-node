@@ -4,25 +4,25 @@
 # shopt -s nullglob
 
 # config
-LINUX_BINARY_DEV_AMD64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/dev/latest/linux/amd64/skynx-node"
-LINUX_BINARY_STABLE_AMD64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/stable/latest/linux/amd64/skynx-node"
-LINUX_BINARY_DEV_386="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/dev/latest/linux/386/skynx-node"
-LINUX_BINARY_STABLE_386="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/stable/latest/linux/386/skynx-node"
-LINUX_BINARY_DEV_ARM64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/dev/latest/linux/arm64/skynx-node"
-LINUX_BINARY_STABLE_ARM64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/stable/latest/linux/arm64/skynx-node"
-LINUX_BINARY_DEV_ARM="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/dev/latest/linux/arm/skynx-node"
-LINUX_BINARY_STABLE_ARM="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/stable/latest/linux/arm/skynx-node"
-DARWIN_BINARY_DEV_AMD64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/dev/latest/darwin/amd64/skynx-node"
-DARWIN_BINARY_STABLE_AMD64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/stable/latest/darwin/amd64/skynx-node"
-DARWIN_BINARY_DEV_ARM64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/dev/latest/darwin/arm64/skynx-node"
-DARWIN_BINARY_STABLE_ARM64="https://pub-93343f8c56164dc1900ad8d753df6ae8.r2.dev/binaries/stable/latest/darwin/arm64/skynx-node"
+LINUX_BINARY_DEV_AMD64="https://dl.skynx.com/binaries/dev/latest/linux/amd64/skynx-node"
+LINUX_BINARY_STABLE_AMD64="https://dl.skynx.com/binaries/stable/latest/linux/amd64/skynx-node"
+LINUX_BINARY_DEV_386="https://dl.skynx.com/binaries/dev/latest/linux/386/skynx-node"
+LINUX_BINARY_STABLE_386="https://dl.skynx.com/binaries/stable/latest/linux/386/skynx-node"
+LINUX_BINARY_DEV_ARM64="https://dl.skynx.com/binaries/dev/latest/linux/arm64/skynx-node"
+LINUX_BINARY_STABLE_ARM64="https://dl.skynx.com/binaries/stable/latest/linux/arm64/skynx-node"
+LINUX_BINARY_DEV_ARM="https://dl.skynx.com/binaries/dev/latest/linux/arm/skynx-node"
+LINUX_BINARY_STABLE_ARM="https://dl.skynx.com/binaries/stable/latest/linux/arm/skynx-node"
+DARWIN_BINARY_DEV_AMD64="https://dl.skynx.com/binaries/dev/latest/darwin/amd64/skynx-node"
+DARWIN_BINARY_STABLE_AMD64="https://dl.skynx.com/binaries/stable/latest/darwin/amd64/skynx-node"
+DARWIN_BINARY_DEV_ARM64="https://dl.skynx.com/binaries/dev/latest/darwin/arm64/skynx-node"
+DARWIN_BINARY_STABLE_ARM64="https://dl.skynx.com/binaries/stable/latest/darwin/arm64/skynx-node"
 
-LINUX_PKG_REPO_DEV="reop.dev.skynx.com"
-LINUX_PKG_REPO_STABLE="repo.skynx.io"
+LINUX_PKG_REPO_DEV="repo.dev.skynx.com"
+LINUX_PKG_REPO_STABLE="repo.skynx.com"
 
 DOCKER=0
-DOCKER_IMAGE_DEV="skynxdev/skynx-node:dev"
-DOCKER_IMAGE_STABLE="skynxdev/skynx-node:latest"
+DOCKER_IMAGE_DEV="skynx/skynx-node:dev"
+DOCKER_IMAGE_STABLE="skynx/skynx-node:latest"
 
 DEV_MODE=0
 

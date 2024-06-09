@@ -277,7 +277,7 @@ func skynx64Resolver(name string) []string {
 	if s[5] == "skynx" && s[6] == "local" {
 		ipv4 := fmt.Sprintf("%s.%s.%s.%s", s[0], s[1], s[2], s[3])
 		if net.ParseIP(ipv4) != nil {
-			addr, err := ipnet.GetMMesh64Addr(mnet.LocalNode().Router().IPv6(), ipv4)
+			addr, err := ipnet.GetSkynx64Addr(mnet.LocalNode().Router().IPv6(), ipv4)
 			if err != nil {
 				return []string{}
 			}

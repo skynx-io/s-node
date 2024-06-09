@@ -128,7 +128,7 @@ Once installed you can review the configuration at `/etc/skynx/skynx-node.yml`.
     # Another Type: forking
 
     # User=
-    WorkingDirectory=/var/local/skynx
+    WorkingDirectory=/var/lib/skynx
     ExecStart=/usr/local/bin/skynx-node start
     Restart=always
 
@@ -175,6 +175,8 @@ sudo systemctl daemon-reload
 sudo rm /usr/local/bin/skynx-node
 sudo rm /etc/skynx/skynx-node.yml
 sudo rmdir /etc/skynx
+sudo rm -rf /var/lib/skynx
+sudo rm -rf /var/cache/skynx
 ```
 
 #### Package Repository
@@ -259,12 +261,14 @@ sudo yum install skynx-node
 
     ```console
     chmod +x skynx-node
-    sudo mkdir -p /usr/local/libexec
-    sudo mv skynx-node /usr/local/libexec/skynx-node
-    sudo chown root: /usr/local/libexec/skynx-node
-    sudo mkdir /etc/skynx
-    sudo vim /etc/skynx/skynx-node.yml
-    sudo chmod 600 /etc/skynx/skynx-node.yml
+    sudo mkdir -p /opt/skynx/libexec
+    sudo mv skynx-node /opt/skynx/libexec/skynx-node
+    sudo chown root: /opt/skynx/libexec/skynx-node
+    sudo mkdir -p /opt/skynx/etc
+    sudo vim /opt/skynx/etc/skynx-node.yml
+    sudo chmod 600 /opt/skynx/etc/skynx-node.yml
+    sudo mkdir -p /opt/skynx/var/lib
+    sudo mkdir -p /opt/skynx/var/cache
     ```
 
     > **IMPORTANT**: In macOS, `iface` must be `utun[0-9]+` in the `skynx-node.yml`, being `utun7` usually a good choice for that setting. Use the command `ifconfig -a` before launching the `skynx-node` service and check that the interface is not in-use.
@@ -274,7 +278,7 @@ sudo yum install skynx-node
 4. Install and start the skynx-node agent as a system service.
 
     ```shell
-    sudo /usr/local/libexec/skynx-node service-install
+    sudo /opt/skynx/libexec/skynx-node service-install
     ```
 
 5. Check the service status.
@@ -291,9 +295,9 @@ sudo yum install skynx-node
         path = /Library/LaunchDaemons/com.skynx.skynx-node.plist
         state = running
 
-        program = /usr/local/libexec/skynx-node
+        program = /opt/skynx/libexec/skynx-node
         arguments = {
-            /usr/local/libexec/skynx-node
+            /opt/skynx/libexec/skynx-node
             service-start
         }
 
@@ -341,10 +345,10 @@ sudo yum install skynx-node
 To remove `skynx-node` from the system, use the following commands:
 
 ```shell
-sudo /usr/local/libexec/skynx-node service-uninstall
-sudo rm /usr/local/libexec/skynx-node
-sudo rm /etc/skynx/skynx-node.yml
-sudo rmdir /etc/skynx
+sudo /opt/skynx/libexec/skynx-node service-uninstall
+sudo rm /opt/skynx/libexec/skynx-node
+sudo rm /opt/skynx/etc/skynx-node.yml
+sudo rm -rf /opt/skynx
 ```
 
 ### Windows Installation

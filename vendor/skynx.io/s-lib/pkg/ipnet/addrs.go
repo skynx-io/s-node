@@ -83,7 +83,7 @@ func GetIPv6Endpoint(ipv6 string) (string, error) {
 	return net.ParseIP(addr).String(), nil
 }
 
-func GetMMesh64Addr(ipv6, ipv4 string) (string, error) {
+func GetSkynx64Addr(ipv6, ipv4 string) (string, error) {
 	if !strings.HasPrefix(ipv6, skynxIPv6Prefix) {
 		return "", errors.Errorf("invalid skynx64 ipv6: %s", ipv6)
 	}

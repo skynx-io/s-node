@@ -1,0 +1,337 @@
+project_name: skynx-node
+
+dist: _dist
+
+# env_files:
+#   github_token: ~/.cloud/github/github_token.buildbot
+
+env:
+  - GO111MODULE=on
+  # - PKG_REPO='skynx'
+  # - PKG_REPO_DEV='skynx-dev'
+
+before:
+  hooks:
+    # - go mod tidy -v
+    # - go mod vendor
+    # - go mod verify
+    # - go generate $(go list ./... | grep -v /vendor/)
+    # - go fmt $(go list ./... | grep -v '/vendor/' | grep -v '.pb.go' | grep -v '.twirp.go' | grep -v 'bindata.go') | tee /dev/stderr
+
+builds:
+  - id: "skynx-node"
+    main: cmd/node/main.go
+    binary: skynx-node
+    flags:
+      #- -tags=dev
+      - -tags="static_build,netgo"
+      - -v
+      - -a
+      - -mod=vendor
+      - -installsuffix=netgo
+      - -trimpath
+      #- -race # requires CGO_ENABLED=1
+    # Custom ldflags templates.
+    # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
+    ldflags:
+      - -s
+      - -w
+      - -X skynx.io/s-lib/pkg/version.GitRepository={{.GitURL}}
+      - -X skynx.io/s-lib/pkg/version.GitCommit={{.ShortCommit}}
+      - -X skynx.io/s-lib/pkg/version.VersionNumber={{.Tag}}
+      - -X skynx.io/s-lib/pkg/version.VersionDate={{.Env.VERSION_DATE}}
+      - -X skynx.io/s-lib/pkg/version.GoVersion={{.Env.GO_VERSION}}
+      - -extldflags -static
+      #- ./usemsan=-msan
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+      ### - freebsd
+    goarch:
+      - amd64
+      # - 386
+      - arm64
+      # - arm
+    goamd64:
+      - v1
+      ## - v2
+      ## - v3
+      ## - v4
+    goarm:
+      - 6
+      ## - 7
+    ignore:
+      # - goos: linux
+      #   goarch: 386
+      # - goos: darwin
+      #   goarch: 386
+      # - goos: darwin
+      #   goarch: arm
+      # - goos: windows
+      #   goarch: 386
+      # - goos: windows
+      #   goarch: arm64
+      # - goos: windows
+      #   goarch: arm
+
+    # lang: go
+
+snapshot:
+  # name_template: '{{ .Tag }}-SNAPSHOT-{{.ShortCommit}}'
+  # name_template: '{{ .Version }}-SNAPSHOT-{{.ShortCommit}}'
+  name_template: "{{ .Version }}-{{.Env.VERSION_DATE}}-SNAPSHOT-{{.ShortCommit}}"
+
+checksum:
+  # name_template: '{{ .ProjectName }}_{{ .Tag }}_checksums.txt'
+  # name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+signs:
+  - cmd: cosign
+    env:
+      # - COSIGN_EXPERIMENTAL=1
+    stdin: "{{ .Env.COSIGN_PWD }}"
+    # certificate: "${artifact}.pem"
+    args:
+      - "sign-blob"
+      - "--key=/cosign/cosign.key"
+      # - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes" # needed on cosign 2.0.0+
+    artifacts: checksum
+    output: false
+
+docker_signs:
+  - cmd: cosign
+    env:
+      # - COSIGN_EXPERIMENTAL=1
+    stdin: "{{ .Env.COSIGN_PWD }}"
+    args:
+      - "sign"
+      - "--key=/cosign/cosign.key"
+      - "${artifact}"
+      - "--yes" # needed on cosign 2.0.0+
+    artifacts: manifests
+    output: false
+
+sboms:
+  - artifacts: archive
+
+archives:
+  - id: skynx-node
+    builds:
+      - skynx-node
+    # name_template: "{{ .ProjectName }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    wrap_in_directory: false
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - ./README.md
+      - ./SECURITY.md
+      - ./SUPPORT.md
+      - ./LICENSE
+
+brews:
+  - name: skynx-node
+    repository:
+      owner: skynx-io
+      name: homebrew-tap
+      branch: master
+    directory: Formula
+    goarm: "6"
+    goamd64: v1
+    commit_author:
+      name: skynxbot
+      email: skynxbot@skynx.com
+    # commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+    homepage: https://skynx.com
+    description: skynx-node agent
+    license: "Apache License 2.0"
+    # Reference: https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html#//apple_ref/doc/uid/10000172i-SW7-SW3
+    # plist: |
+    #   <?xml version="1.0" encoding="UTF-8"?>
+    #   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    #   <plist version="1.0">
+    #       <dict>
+    #           <key>Label</key>
+    #           <string>com.skynx.skynx-node</string>
+    #           <key>ProgramArguments</key>
+    #           <array>
+    #               <string>/opt/skynx/libexec/skynx-node</string>
+    #               <string>start</string>
+    #               <string>--config</string>
+    #               <string>/opt/skynx/etc/skynx-node.yml</string>
+    #           </array>
+    #           <key>RunAtLoad</key>
+    #           <true/>
+    #           <key>KeepAlive</key>
+    #           <true/>
+    #           <key>Disabled</key>
+    #           <false/>
+    #       </dict>
+    #   </plist>
+    test: |-
+      system "#{libexec}/skynx-node version"
+    install: |-
+      libexec.install "skynx-node"
+    # post_install: |-
+    #   etc.install "skynx-node.yml"
+
+nfpms:
+  - id: skynx-node
+    package_name: skynx-node
+    # file_name_template: "{{ .ProjectName }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}"
+    # file_name_template: "{{ .ProjectName }}_{{ .Arch }}"
+    # file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    file_name_template: "{{ .ConventionalFileName }}"
+    builds:
+      - skynx-node
+    vendor: skynx.com
+    homepage: https://skynx.com
+    maintainer: skynxbot <skynxbot@skynx.com>
+    description: skynx-node
+    license: "Apache License 2.0"
+    formats:
+      - deb
+      - rpm
+      # - apk
+      # - archlinux
+    bindir: /usr/bin
+    dependencies:
+      - kmod
+      # - iproute2
+    section: misc
+    priority: optional
+    meta: false
+    contents:
+      # basic files that apply to all packagers
+      - src: ./build/package/linux/skynx-node.service
+        dst: /etc/systemd/system/skynx-node.service
+      - src: ./README.md
+        dst: /usr/share/doc/skynx-node/README.md
+      - src: ./SECURITY.md
+        dst: /usr/share/doc/skynx-node/SECURITY.md
+      - src: ./SUPPORT.md
+        dst: /usr/share/doc/skynx-node/SUPPORT.md
+      - src: ./LICENSE
+        dst: /usr/share/doc/skynx-node/LICENSE
+      # config files:
+      - src: ./configs/skynx-node.yml
+        dst: /etc/skynx/skynx-node.yml
+        type: config
+      # empty dir
+      - dst: /var/lib/skynx
+        type: dir
+      - dst: /var/cache/skynx
+        type: dir
+    deb:
+      lintian_overrides:
+        - statically-linked-binary
+        - changelog-file-missing-in-native-package
+
+dockers:
+  - dockerfile: ./build/package/dockerfiles/Dockerfile
+    image_templates:
+      - "skynx/skynx-node:latest"
+      - "skynx/skynx-node:snapshot"
+      - "skynx/skynx-node:dev"
+      - "skynx/skynx-node:stable"
+      - "skynx/skynx-node:{{ .Tag }}"
+      - "skynx/skynx-node:{{ .Tag }}-{{ .Env.GO_VERSION }}"
+      - "skynx/skynx-node:v{{ .Major }}"
+      - "skynx/skynx-node:v{{ .Major }}.{{ .Minor }}"
+      # - "ghcr.io/skynx-io/skynx-node:latest"
+      # - "ghcr.io/skynx-io/skynx-node:snapshot"
+      # - "ghcr.io/skynx-io/skynx-node:dev"
+      # - "ghcr.io/skynx-io/skynx-node:stable"
+      # - "ghcr.io/skynx-io/skynx-node:{{ .Tag }}"
+      # - "ghcr.io/skynx-io/skynx-node:{{ .Tag }}-{{ .Env.GO_VERSION }}"
+      # - "ghcr.io/skynx-io/skynx-node:v{{ .Major }}"
+      # - "ghcr.io/skynx-io/skynx-node:v{{ .Major }}.{{ .Minor }}"
+    use: buildx
+    goos: linux
+    goarch: amd64
+    build_flag_templates:
+      - "--pull"
+      - "--label=io.artifacthub.package.readme-url=https://raw.githubusercontent.com/skynx-io/s-node/master/README.md"
+      - "--label=io.artifacthub.package.license=Apache License 2.0"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      # - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--label=org.opencontainers.image.source=https://github.com/skynx-io/s-node"
+      - "--platform=linux/amd64"
+      - "--rm"
+      - "--force-rm"
+      - "--no-cache"
+
+release:
+  github:
+    owner: skynx-io
+    name: s-node
+  draft: false
+  prerelease: auto # auto | true | false
+  name_template: "{{.Tag}}"
+  disable: false
+  # extra_files:
+  #   - glob: ./_dist/*.sig
+  footer: |
+    **Full Changelog**: https://github.com/skynx-io/s-node/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+    ## What to do next?
+
+    - Read the [documentation](https://skynx.com/docs/)
+    - Join our [Discord server](https://skynx.com/discord)
+    - Follow us on [X](https://x.com/skynxHQ)
+    - Follow us on [Mastodon](https://mastodon.social/@skynx)
+
+changelog:
+  disable: false
+  use: github
+  sort: asc
+  groups:
+    - title: Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: "Bug fixes"
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: Others
+      order: 999
+  filters:
+    exclude:
+      - "^doc"
+      - "^chore"
+      - "^wip"
+      - "^test"
+      - "^typo"
+      - "^Merge"
+
+announce:
+  discord:
+    enabled: true
+    author: skynx
+    color: "46299"
+    icon_url: https://raw.githubusercontent.com/skynx-io/assets/master/images/logo/skynx-logo_black-blue_1400x1400.png
+  twitter:
+    enabled: false
+# publishers:
+#   # dev repos
+#   - name: reop.dev.skynx.com/apt
+#     cmd: ./build/_deps/scripts/_local/build/pkg-upload.sh '{{ dir .ArtifactPath }}/{{ .ProjectName }}-node_{{ .Tag }}_{{ .Os }}_{{ .Arch }}.deb' '{{.Env.PKG_REPO_DEV}}'
+#   - name: reop.dev.skynx.com/yum
+#     cmd: ./build/_deps/scripts/_local/build/pkg-upload.sh '{{ dir .ArtifactPath }}/{{ .ProjectName }}-node_{{ .Tag }}_{{ .Os }}_{{ .Arch }}.rpm' '{{.Env.PKG_REPO_DEV}}'
+#   # stable repos
+#   - name: repo.skynx.com/apt
+#     cmd: ./build/_deps/scripts/_local/build/pkg-upload.sh '{{ dir .ArtifactPath }}/{{ .ProjectName }}-node_{{ .Tag }}_{{ .Os }}_{{ .Arch }}.deb' '{{.Env.PKG_REPO}}'
+#   - name: repo.skynx.com/yum
+#     cmd: ./build/_deps/scripts/_local/build/pkg-upload.sh '{{ dir .ArtifactPath }}/{{ .ProjectName }}-node_{{ .Tag }}_{{ .Os }}_{{ .Arch }}.rpm' '{{.Env.PKG_REPO}}'

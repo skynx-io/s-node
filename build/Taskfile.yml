@@ -35,7 +35,7 @@ env:
   # GOPRIVATE: skynx.io/s-api-go,skynx.io/s-lib
   GITHUB_TOKEN:
     sh: |
-      if [[ -f $HOME/.cloud/github/github_token.skynxhbot ]]; then
+      if [[ -f $HOME/.cloud/github/github_token.skynxbot ]]; then
         cat $HOME/.cloud/github/github_token.skynxbot;
       else
         echo "${GITHUB_TOKEN}";

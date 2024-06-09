@@ -1,8 +1,7 @@
 module skynx.io/s-node
 
 go 1.22
-
-toolchain go1.22.0
+toolchain go1.22.3
 
 replace skynx.io/s-api-go => ../s-api/_dist/skynx.io/s-api-go
 
@@ -33,7 +32,7 @@ require (
 	golang.zx2c4.com/wireguard v0.0.0-20211116201604-ffb742d43d92
 	google.golang.org/grpc v1.64.0
 	k8s.io/api v0.29.3
-	k8s.io/apimachinery v0.29.3
+	k8s.io/apimachinery v0.30.1
 	k8s.io/client-go v0.29.3
 	modernc.org/sqlite v1.29.5
 	skynx.io/s-api-go v0.0.0-00010101000000-000000000000
@@ -438,8 +437,8 @@ require (
 	k8s.io/apiserver v0.29.0 // indirect
 	k8s.io/cli-runtime v0.29.0 // indirect
 	k8s.io/component-base v0.29.0 // indirect
-	k8s.io/klog/v2 v2.120.0 // indirect
-	k8s.io/kube-openapi v0.0.0-20231010175941-2dd684a91f00 // indirect
+	k8s.io/klog/v2 v2.120.1 // indirect
+	k8s.io/kube-openapi v0.0.0-20240228011516-70dd3763d340 // indirect
 	k8s.io/kubectl v0.29.0 // indirect
 	k8s.io/utils v0.0.0-20231127182322-b307cd553661 // indirect
 	lukechampine.com/blake3 v1.2.1 // indirect

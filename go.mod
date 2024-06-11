@@ -35,7 +35,7 @@ require (
 	k8s.io/api v0.30.1
 	k8s.io/apimachinery v0.30.1
 	k8s.io/client-go v0.30.1
-	modernc.org/sqlite v1.30.0
+	modernc.org/sqlite v1.30.1
 	skynx.io/s-api-go v0.0.0-00010101000000-000000000000
 	skynx.io/s-lib v0.0.0-00010101000000-000000000000
 )
@@ -444,7 +444,7 @@ require (
 	k8s.io/utils v0.0.0-20231127182322-b307cd553661 // indirect
 	lukechampine.com/blake3 v1.2.1 // indirect
 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect
-	modernc.org/libc v1.50.9 // indirect
+	modernc.org/libc v1.52.1 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.8.0 // indirect
 	modernc.org/strutil v1.2.0 // indirect
